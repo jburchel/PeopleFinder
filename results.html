@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Frontier Finder</title>
+    <link rel="stylesheet" href="src/css/results.css">
+    <link href="https://fonts.cdnfonts.com/css/cronos-pro" rel="stylesheet">
+    <!-- Font Awesome for play button icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="src/assets/images/logo.png" alt="Crossover Global Logo" class="logo">
+        </div>
+        <h1>Search Results</h1>
+    </header>
+
+    <main>
+        <div class="controls">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                Back to Search
+            </button>
+            <div class="sort-control">
+                <label for="sort">Sort by:</label>
+                <select id="sort" name="sort">
+                    <option value="distance">Distance</option>
+                    <option value="population">Population</option>
+                    <option value="language">Language</option>
+                    <option value="religion">Religion</option>
+                    <option value="type">Type (FPG/UUPG)</option>
+                    <option value="evangelical">Percent Evangelical</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="results-container">
+            <ul class="results-list" id="resultsList">
+                <!-- Results will be populated by JavaScript -->
+            </ul>
+        </div>
+
+        <div class="top-100-link">
+            <a href="top_100.html">View Top 100 List</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crossover Global. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="src/js/results.js"></script>
+</body>
+</html>

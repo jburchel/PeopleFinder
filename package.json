@@ -1,0 +1,20 @@
+{
+  "name": "FrontierFinder",
+  "version": "1.0.0",
+  "description": "A web application to find Frontier People Groups (FPGs) and Unreached Unengaged People Groups (UUPGs) within a specified proximity of selected UPGs where Crossover Global has a presence.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: No test specified' && exit 1",
+    "build": "echo 'Building the app...'",
+    "commit": "./scripts/git-commit.sh"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^11.1.0",
+    "js-cookie": "^3.7.1",
+    "jquery": "^3.0.5",
+    "axios": "^1.7.9"
+  }
+}
+

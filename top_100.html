@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 100 List - Frontier Finder</title>
+    <link rel="stylesheet" href="src/css/top_100.css">
+    <link href="https://fonts.cdnfonts.com/css/cronos-pro" rel="stylesheet">
+    <!-- Font Awesome for play button icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="src/assets/images/logo.png" alt="Crossover Global Logo" class="logo">
+        </div>
+        <h1>Top 100 UPGs</h1>
+    </header>
+
+    <main>
+        <div class="controls">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                Back to Search
+            </button>
+            <div class="sort-control">
+                <label for="sort">Sort by:</label>
+                <select id="sort" name="sort">
+                    <option value="distance">Distance</option>
+                    <option value="population">Population</option>
+                    <option value="language">Language</option>
+                    <option value="religion">Religion</option>
+                    <option value="type">Type (FPG/UUPG)</option>
+                    <option value="evangelical">Percent Evangelical</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="top-100-container">
+            <ul class="top-100-list" id="top100List">
+                <!-- List will be populated by JavaScript -->
+            </ul>
+            <div class="empty-list" id="emptyList" style="display: none;">
+                <p>No UPGs have been added to your Top 100 list yet.</p>
+                <p>Go to the search results to add UPGs to your list.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crossover Global. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="src/js/top_100.js"></script>
+</body>
+</html>
