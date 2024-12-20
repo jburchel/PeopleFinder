@@ -51,4 +51,13 @@ git commit -m "$prefix: $message"
 # Push to GitHub
 git push origin main
 
-echo "Changes committed and pushed successfully!" 
+# Display success message
+echo "✨ Changes committed and pushed successfully!"
+echo "Commit: $prefix: $message"
+
+# Create a message for Cursor's Source Control Graph
+cursor_message="🚀 Latest commit: $prefix: $message"
+echo "$cursor_message" > .cursor-message
+
+# Display the message in terminal with some styling
+echo "\033[1;32m$cursor_message\033[0m" 
