@@ -27,26 +27,27 @@ done <<< "$changed_files"
 # Determine commit type and message
 if $has_config; then
     prefix="config"
-    message="🔧 update configuration settings"
+    message="[Config] 🔧 Update configuration settings"
 elif $has_js; then
     prefix="feat"
-    message="✨ update JavaScript functionality"
+    message="[Feature] ✨ Update JavaScript functionality"
 elif $has_css; then
     prefix="style"
-    message="🎨 update styles and layout"
+    message="[Style] 🎨 Update styles and layout"
 elif $has_html; then
     prefix="feat"
-    message="📝 update HTML structure"
+    message="[Feature] 📝 Update HTML structure"
 else
     prefix="update"
-    message="🔄 make general updates"
+    message="[Update] 🔄 General changes"
 fi
 
 # Add all changes
 git add .
 
-# Commit with generated message
-git commit -m "$prefix: $message" -m "Changed files: $changed_files"
+# Create a more descriptive commit message
+num_files=$(echo "$changed_files" | wc -l)
+git commit -m "$message" -m "Type: $prefix" -m "Files changed: $num_files" -m "Details: $changed_files"
 
 # Push to GitHub
 git push origin master

@@ -41,3 +41,77 @@ async function initApp() {
 
 // Call the main function
 initApp();
+
+// Function to load CSV data
+async function loadCSVData() {
+    try {
+        const response = await fetch('./data/existing_upgs_updated.csv');
+        const csvText = await response.text();
+        return parseCSV(csvText);
+    } catch (error) {
+        console.error('Error loading CSV:', error);
+        return [];
+    }
+}
+
+// Function to parse CSV data
+function parseCSV(csvText) {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',');
+    return lines.slice(1).map(line => {
+        const values = line.split(',');
+        const entry = {};
+        headers.forEach((header, index) => {
+            entry[header.trim()] = values[index]?.trim() || '';
+        });
+        return entry;
+    });
+}
+
+// Function to populate country dropdown
+function populateCountryDropdown(data) {
+    const countrySelect = document.getElementById('country');
+    countrySelect.innerHTML = '<option value="">Choose a country...</option>';
+    const countries = [...new Set(data.map(row => row.country))].sort();
+    
+    countries.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+    });
+}
+
+// Function to populate UPG dropdown based on selected country
+function populateUPGDropdown(data, selectedCountry) {
+    const upgSelect = document.getElementById('upg');
+    upgSelect.innerHTML = '<option value="">Select a UPG...</option>';
+    
+    const upgs = data
+        .filter(row => row.country === selectedCountry)
+        .sort((a, b) => a.name.localeCompare(b.name));
+    
+    upgs.forEach(upg => {
+        const option = document.createElement('option');
+        option.value = upg.name;
+        option.textContent = `${upg.name} (${upg.population}) [${upg.pronunciation}]`;
+        upgSelect.appendChild(option);
+    });
+}
+
+// Initialize the form
+async function initializeForm() {
+    const data = await loadCSVData();
+    if (data.length > 0) {
+        populateCountryDropdown(data);
+        
+        // Add event listener for country selection
+        document.getElementById('country').addEventListener('change', (e) => {
+            const selectedCountry = e.target.value;
+            populateUPGDropdown(data, selectedCountry);
+        });
+    }
+}
+
+// Start initialization when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeForm);
