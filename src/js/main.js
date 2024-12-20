@@ -1,26 +1,4 @@
 // src/js/main.js
-import * as firebase from 'firebase';
-import moment from 'moment';
-
-// Initialize Firebase
-const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
-};
-firebase.initializeApp(firebaseConfig);
-
-// Firebase references
-const database = firebase.database();
-
-// Example function to fetch data from Firestore
-async function fetchData() {
-    const response = await axios.get('https://your-database-url.firebaseio.com/fpgs.json');
-    return response.data;
-}
 
 // Function to render results
 function renderResults(results) {
@@ -47,6 +25,7 @@ async function loadCSVData() {
     try {
         const response = await fetch('./data/existing_upgs_updated.csv');
         const csvText = await response.text();
+        console.log('CSV loaded:', csvText.substring(0, 200)); // Show first 200 chars
         return parseCSV(csvText);
     } catch (error) {
         console.error('Error loading CSV:', error);
@@ -58,7 +37,9 @@ async function loadCSVData() {
 function parseCSV(csvText) {
     const lines = csvText.split('\n');
     const headers = lines[0].split(',');
-    return lines.slice(1).map(line => {
+    console.log('CSV headers:', headers);
+    
+    const data = lines.slice(1).map(line => {
         const values = line.split(',');
         const entry = {};
         headers.forEach((header, index) => {
@@ -66,6 +47,8 @@ function parseCSV(csvText) {
         });
         return entry;
     });
+    console.log('Parsed data:', data.slice(0, 2)); // Show first 2 entries
+    return data;
 }
 
 // Function to populate country dropdown
@@ -73,6 +56,7 @@ function populateCountryDropdown(data) {
     const countrySelect = document.getElementById('country');
     countrySelect.innerHTML = '<option value="">Choose a country...</option>';
     const countries = [...new Set(data.map(row => row.country))].sort();
+    console.log('Unique countries:', countries);
     
     countries.forEach(country => {
         const option = document.createElement('option');
@@ -90,6 +74,7 @@ function populateUPGDropdown(data, selectedCountry) {
     const upgs = data
         .filter(row => row.country === selectedCountry)
         .sort((a, b) => a.name.localeCompare(b.name));
+    console.log(`UPGs for ${selectedCountry}:`, upgs);
     
     upgs.forEach(upg => {
         const option = document.createElement('option');
@@ -102,12 +87,14 @@ function populateUPGDropdown(data, selectedCountry) {
 // Initialize the form
 async function initializeForm() {
     const data = await loadCSVData();
+    console.log('Data loaded, length:', data.length);
     if (data.length > 0) {
         populateCountryDropdown(data);
         
         // Add event listener for country selection
         document.getElementById('country').addEventListener('change', (e) => {
             const selectedCountry = e.target.value;
+            console.log('Country selected:', selectedCountry);
             populateUPGDropdown(data, selectedCountry);
         });
     }
