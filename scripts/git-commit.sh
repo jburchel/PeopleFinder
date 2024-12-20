@@ -49,7 +49,7 @@ git add .
 git commit -m "$prefix: $message" -m "Changed files: $changed_files"
 
 # Push to GitHub
-git push origin main
+git push origin master
 
 # Display success message
 echo "✨ Changes committed and pushed successfully!"
