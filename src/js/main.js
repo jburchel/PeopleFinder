@@ -2,6 +2,9 @@
 
 import { config } from './config.js';
 
+// Global variable to store loaded data
+let allData = [];
+
 // Function to render results
 function renderResults(results) {
     // Implement your result rendering logic here
@@ -27,7 +30,7 @@ async function loadCSVData() {
     try {
         const response = await fetch('./data/existing_upgs_updated.csv');
         const csvText = await response.text();
-        console.log('CSV loaded:', csvText.substring(0, 200)); // Show first 200 chars
+        console.log('CSV loaded:', csvText.substring(0, 200));
         return parseCSV(csvText);
     } catch (error) {
         console.error('Error loading CSV:', error);
@@ -49,7 +52,7 @@ function parseCSV(csvText) {
         });
         return entry;
     });
-    console.log('Parsed data:', data.slice(0, 2)); // Show first 2 entries
+    console.log('Parsed data:', data.slice(0, 2));
     return data;
 }
 
@@ -88,17 +91,20 @@ function populateUPGDropdown(data, selectedCountry) {
 
 // Initialize the form
 async function initializeForm() {
-    const data = await loadCSVData();
-    console.log('Data loaded, length:', data.length);
-    if (data.length > 0) {
-        populateCountryDropdown(data);
+    allData = await loadCSVData();
+    console.log('Data loaded, length:', allData.length);
+    if (allData.length > 0) {
+        populateCountryDropdown(allData);
         
         // Add event listener for country selection
         document.getElementById('country').addEventListener('change', (e) => {
             const selectedCountry = e.target.value;
             console.log('Country selected:', selectedCountry);
-            populateUPGDropdown(data, selectedCountry);
+            populateUPGDropdown(allData, selectedCountry);
         });
+
+        // Add form submit handler
+        document.getElementById('searchForm').addEventListener('submit', handleSearch);
     }
 }
 
@@ -199,6 +205,3 @@ function isWithinRadius(coord1, coord2, radius, unit) {
 function toRad(degrees) {
     return degrees * (Math.PI/180);
 }
-
-// Add form submit handler
-document.getElementById('searchForm').addEventListener('submit', handleSearch);
