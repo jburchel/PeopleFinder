@@ -46,7 +46,7 @@ h1 {
 
 /* Main Content Styles */
 main {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: var(--spacing-unit);
 }
@@ -163,4 +163,22 @@ footer {
     .form-group {
         margin-bottom: var(--spacing-unit);
     }
+}
+
+/* Search Radius Specific Styles */
+.radius-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+}
+
+input[type="number"]#radius {
+    width: 100px;
+}
+
+.radius-radio-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0;
 }

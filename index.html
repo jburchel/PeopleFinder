@@ -32,12 +32,14 @@
                         <!-- Row 2: Search Radius -->
                         <div class="form-group">
                             <label for="radius">Search Radius:</label>
-                            <input type="number" id="radius" name="radius" required min="1">
-                            <div class="radio-group">
-                                <input type="radio" id="miles" name="unit" value="miles" checked>
-                                <label for="miles">Miles</label>
-                                <input type="radio" id="kilometers" name="unit" value="kilometers">
-                                <label for="kilometers">Kilometers</label>
+                            <div class="radius-container">
+                                <input type="number" id="radius" name="radius" required min="1">
+                                <div class="radio-group radius-radio-group">
+                                    <input type="radio" id="miles" name="unit" value="miles" checked>
+                                    <label for="miles">Miles</label>
+                                    <input type="radio" id="kilometers" name="unit" value="kilometers">
+                                    <label for="kilometers">Kilometers</label>
+                                </div>
                             </div>
                         </div>
                     </div>
