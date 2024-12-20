@@ -89,6 +89,84 @@ function populateUPGDropdown(data, selectedCountry) {
     });
 }
 
+// Function to handle search
+async function handleSearch(event) {
+    event.preventDefault();
+    
+    const country = document.getElementById('country').value;
+    const upgName = document.getElementById('upg').value;
+    const radius = document.getElementById('radius').value;
+    const unit = document.querySelector('input[name="unit"]:checked').value;
+    const type = document.querySelector('input[name="type"]:checked').value;
+
+    let results = [];
+    
+    // Get selected UPG's coordinates
+    const selectedUPG = allData.find(upg => upg.name === upgName);
+    console.log('Selected UPG:', selectedUPG);
+    
+    if (!selectedUPG) {
+        alert('Please select a UPG first');
+        return;
+    }
+
+    const baseCoords = {
+        lat: parseFloat(selectedUPG.latitude),
+        lng: parseFloat(selectedUPG.longitude)
+    };
+
+    if (type === 'uupg' || type === 'both') {
+        const uupgData = await loadUUPGData();
+        const uupgResults = uupgData.filter(group => {
+            return isWithinRadius(
+                baseCoords,
+                { lat: parseFloat(group.latitude), lng: parseFloat(group.longitude) },
+                radius,
+                unit
+            );
+        });
+        results = [...results, ...uupgResults];
+    }
+
+    if (type === 'fpg' || type === 'both') {
+        const fpgData = await fetchFPGData(country);
+        const fpgResults = fpgData.filter(group => {
+            return isWithinRadius(
+                baseCoords,
+                { lat: parseFloat(group.Latitude), lng: parseFloat(group.Longitude) },
+                radius,
+                unit
+            );
+        });
+        results = [...results, ...fpgResults];
+    }
+
+    console.log('Search results:', results);
+    // Store results and redirect to results page
+    sessionStorage.setItem('searchResults', JSON.stringify(results));
+    window.location.href = 'results.html';
+}
+
+// Helper function to calculate distance between coordinates
+function isWithinRadius(coord1, coord2, radius, unit) {
+    const R = unit === 'kilometers' ? 6371 : 3959; // Earth's radius in km or miles
+    const lat1 = toRad(coord1.lat);
+    const lat2 = toRad(coord2.lat);
+    const dLat = toRad(coord2.lat - coord1.lat);
+    const dLon = toRad(coord2.lng - coord1.lng);
+
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+
+    return distance <= radius;
+}
+
+function toRad(degrees) {
+    return degrees * (Math.PI/180);
+}
+
 // Initialize the form
 async function initializeForm() {
     allData = await loadCSVData();
@@ -134,74 +212,4 @@ async function fetchFPGData(country) {
         console.error('Error fetching FPG data:', error);
         return [];
     }
-}
-
-// Function to handle search
-async function handleSearch(event) {
-    event.preventDefault();
-    
-    const country = document.getElementById('country').value;
-    const upg = document.getElementById('upg').value;
-    const radius = document.getElementById('radius').value;
-    const unit = document.querySelector('input[name="unit"]:checked').value;
-    const type = document.querySelector('input[name="type"]:checked').value;
-
-    let results = [];
-    
-    // Get selected UPG's coordinates
-    const selectedUPG = allData.find(upg => upg.name === upg);
-    const baseCoords = {
-        lat: parseFloat(selectedUPG.latitude),
-        lng: parseFloat(selectedUPG.longitude)
-    };
-
-    if (type === 'uupg' || type === 'both') {
-        const uupgData = await loadUUPGData();
-        const uupgResults = uupgData.filter(group => {
-            return isWithinRadius(
-                baseCoords,
-                { lat: parseFloat(group.latitude), lng: parseFloat(group.longitude) },
-                radius,
-                unit
-            );
-        });
-        results = [...results, ...uupgResults];
-    }
-
-    if (type === 'fpg' || type === 'both') {
-        const fpgData = await fetchFPGData(country);
-        const fpgResults = fpgData.filter(group => {
-            return isWithinRadius(
-                baseCoords,
-                { lat: parseFloat(group.Latitude), lng: parseFloat(group.Longitude) },
-                radius,
-                unit
-            );
-        });
-        results = [...results, ...fpgResults];
-    }
-
-    // Store results and redirect to results page
-    sessionStorage.setItem('searchResults', JSON.stringify(results));
-    window.location.href = 'results.html';
-}
-
-// Helper function to calculate distance between coordinates
-function isWithinRadius(coord1, coord2, radius, unit) {
-    const R = unit === 'kilometers' ? 6371 : 3959; // Earth's radius in km or miles
-    const lat1 = toRad(coord1.lat);
-    const lat2 = toRad(coord2.lat);
-    const dLat = toRad(coord2.lat - coord1.lat);
-    const dLon = toRad(coord2.lng - coord1.lng);
-
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
-
-    return distance <= radius;
-}
-
-function toRad(degrees) {
-    return degrees * (Math.PI/180);
 }
