@@ -3,48 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 100 List - Frontier Finder</title>
-    
-    <!-- Consolidated CSS -->
+    <title>Top 100 - Frontier Finder</title>
     <link rel="stylesheet" href="css/styles.css">
-    
-    <!-- Firebase CDN -->
-    <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-database.js"></script>
 </head>
 <body>
     <header>
         <div class="logo-container">
-            <img src="assets/images/logo.png" alt="Crossover Global Logo" class="logo">
+            <img src="images/cg_logo.png" alt="Crossover Global Logo">
         </div>
-        <h1>Top 100 UPGs</h1>
-        <div class="list-count" id="listCount">0/100</div>
+        <h1>Top 100 List</h1>
     </header>
 
     <main>
-        <div class="controls">
-            <button class="back-button" onclick="window.location.href='index.html'">
-                Back to Search
-            </button>
-            <div class="sort-control">
-                <label for="sort">Sort by:</label>
-                <select id="sort" name="sort">
-                    <option value="population">Population</option>
-                    <option value="evangelical">Percent Evangelical</option>
-                    <option value="language">Language</option>
-                    <option value="religion">Religion</option>
-                </select>
+        <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <div class="sort-buttons">
+                <button class="sort-button active" data-sort="distance">Distance</button>
+                <button class="sort-button" data-sort="population">Population</button>
+                <button class="sort-button" data-sort="language">Language</button>
+                <button class="sort-button" data-sort="religion">Religion</button>
+                <button class="sort-button" data-sort="evangelical">Evangelical %</button>
             </div>
         </div>
 
-        <div class="top-100-container">
-            <ul class="top-100-list" id="top100List">
-                <!-- List will be populated by JavaScript -->
-            </ul>
-            <div class="empty-list" id="emptyList" style="display: none;">
-                <p>No UPGs have been added to your Top 100 list yet.</p>
-                <p>Go to the search results to add UPGs to your list.</p>
-            </div>
+        <div id="top100List">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <div class="navigation-buttons">
+            <button onclick="window.location.href='index.html'" class="back-button">Back to Search</button>
         </div>
     </main>
 
@@ -52,8 +39,7 @@
         <p>&copy; 2024 Crossover Global. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript -->
     <script src="js/config.js"></script>
-    <script src="js/top_100.js"></script>
+    <script src="js/top100.js"></script>
 </body>
 </html>

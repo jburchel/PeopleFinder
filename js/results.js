@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.classList.add('active');
             
             // Sort and display results
-            sortResults(results, e.target.dataset.sort);
+            const sortedResults = sortResults(results, e.target.dataset.sort);
+            displayResults(sortedResults);
         });
     });
 });
@@ -96,24 +97,22 @@ function displayResults(results) {
 }
 
 function sortResults(results, sortBy) {
-    const sortedResults = [...results].sort((a, b) => {
+    return [...results].sort((a, b) => {
         switch (sortBy) {
             case 'distance':
                 return a.distance - b.distance;
             case 'population':
-                return (b.Population || 0) - (a.Population || 0);
+                return (b.Population || b.population || 0) - (a.Population || a.population || 0);
             case 'language':
-                return (a.PrimaryLanguageName || '').localeCompare(b.PrimaryLanguageName || '');
+                return (a.PrimaryLanguageName || a.language || '').localeCompare(b.PrimaryLanguageName || b.language || '');
             case 'religion':
-                return (a.PrimaryReligion || '').localeCompare(b.PrimaryReligion || '');
+                return (a.PrimaryReligion || a.religion || '').localeCompare(b.PrimaryReligion || b.religion || '');
             case 'evangelical':
                 return (b.PercentEvangelical || 0) - (a.PercentEvangelical || 0);
             default:
                 return 0;
         }
     });
-
-    displayResults(sortedResults);
 }
 
 function formatNumber(num) {
