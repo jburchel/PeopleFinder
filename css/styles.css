@@ -272,11 +272,6 @@ footer {
     margin-bottom: 15px;
 }
 
-.result-actions {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-}
-
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
@@ -369,22 +364,26 @@ footer {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex: 1;
 }
 
 .title-group input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
+    margin: 0;
 }
 
 .title-group h3 {
     margin: 0;
+    display: inline-flex;
+    align-items: center;
 }
 
-/* Update existing result-header style */
 .result-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    gap: 15px;
 }
