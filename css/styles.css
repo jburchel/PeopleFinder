@@ -363,3 +363,28 @@ footer {
         align-items: flex-start;
     }
 }
+
+/* Add to your existing styles */
+.title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.title-group h3 {
+    margin: 0;
+}
+
+/* Update existing result-header style */
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}

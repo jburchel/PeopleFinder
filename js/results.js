@@ -60,9 +60,16 @@ function createResultCard(result, unit) {
     return `
         <div class="result-card ${result.type.toLowerCase()}">
             <div class="result-header">
-                <h3>${result.PeopNameInCountry || result.name} 
-                    <span class="pronunciation">[${result.Pronunciation || result.pronunciation || 'N/A'}]</span>
-                </h3>
+                <div class="title-group">
+                    <input type="checkbox" 
+                           class="add-to-top-100" 
+                           data-group-id="${result.PeopleID3 || result.id}"
+                           id="group-${result.PeopleID3 || result.id}">
+                    <h3>
+                        ${result.PeopNameInCountry || result.name} 
+                        <span class="pronunciation">[${result.Pronunciation || result.pronunciation || 'N/A'}]</span>
+                    </h3>
+                </div>
                 <span class="distance">${result.distance.toFixed(1)} ${unit}</span>
             </div>
             <div class="result-details">
@@ -72,11 +79,6 @@ function createResultCard(result, unit) {
                 <p><strong>Location:</strong> ${result.country || result.Ctry}</p>
                 ${result.PercentEvangelical ? 
                     `<p><strong>Evangelical:</strong> ${result.PercentEvangelical}%</p>` : ''}
-            </div>
-            <div class="result-actions">
-                <button class="add-to-top-100" data-group-id="${result.PeopleID3 || result.id}">
-                    Add to Top 100
-                </button>
             </div>
         </div>
     `;
