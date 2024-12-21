@@ -9,7 +9,7 @@ let allData = [];
 async function loadCSVData() {
     try {
         console.log('Loading CSV data...');
-        const response = await fetch('data/existing_upgs_updated.csv');
+        const response = await fetch('../data/existing_upgs_updated.csv');
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -126,16 +126,20 @@ async function handleSearch(event) {
 // Initialize the page
 async function init() {
     try {
-        // Load data
+        console.log('Initializing application...');
         allData = await loadCSVData();
         console.log('Data loaded, length:', allData.length);
         
         if (allData.length > 0) {
-            // Setup dropdowns
+            console.log('First record:', allData[0]);
             populateCountries(allData);
             
             // Add event listeners
-            document.getElementById('country').addEventListener('change', (e) => {
+            const countrySelect = document.getElementById('country');
+            console.log('Country select element:', countrySelect);
+            
+            countrySelect.addEventListener('change', (e) => {
+                console.log('Country changed to:', e.target.value);
                 populateUPGs(e.target.value);
             });
             
