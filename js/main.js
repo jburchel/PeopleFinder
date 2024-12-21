@@ -64,19 +64,17 @@ async function loadUUPGData() {
             headers.forEach((header, index) => {
                 entry[header] = values[index] || '';
             });
-            
-            // Add type identifier
-            entry.type = 'UUPG';
-            
+
+            // Map fields exactly as they appear in CSV
             return {
-                name: entry[0] || '',                // Name
-                pronunciation: entry[1] || '',       // Pronunciation
-                country: entry[2] || '',            // Country
-                population: parseInt(entry[3]) || 0, // Population
-                language: entry[4] || '',           // Language
-                religion: entry[5] || '',           // Religion
-                latitude: parseFloat(entry[6]) || 0, // Latitude
-                longitude: parseFloat(entry[7]) || 0,// Longitude
+                name: entry.PeopleName || '',
+                pronunciation: entry.pronunciation || '',
+                country: entry.Country || '',
+                population: parseInt(entry.Population) || 0,
+                language: entry.Language || '',
+                religion: entry.Religion || '',
+                latitude: parseFloat(entry.Latitude) || 0,
+                longitude: parseFloat(entry.Longitude) || 0,
                 type: 'UUPG'
             };
         });
@@ -268,6 +266,10 @@ async function handleSearch(event) {
         results.sort((a, b) => a.distance - b.distance);
 
         // Store results in sessionStorage
+        console.log('Storing results:', {
+            results,
+            searchParams: formData
+        });
         sessionStorage.setItem('searchResults', JSON.stringify({
             results,
             searchParams: formData

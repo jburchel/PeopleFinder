@@ -2,11 +2,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     const storedData = JSON.parse(sessionStorage.getItem('searchResults'));
     if (!storedData) {
+        console.error('No search results found in session storage');
         window.location.href = 'index.html';
         return;
     }
 
+    console.log('Loaded search results:', storedData);
     const { results, searchParams } = storedData;
+    
+    if (!results || !results.length) {
+        console.log('No results to display');
+        displayError('No results found matching your search criteria.');
+        return;
+    }
+
+    console.log('Displaying results:', results);
     displaySearchSummary(searchParams);
     displayResults(results);
 
