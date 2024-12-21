@@ -1,9 +1,0 @@
-/* Fallback font stack */
-:root {
-  --font-primary: "Cronos Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
-}
-
-/* Use CSS variable throughout the app */
-.title, h1, h2, h3 {
-  font-family: var(--font-primary);
-} 
