@@ -1,6 +1,7 @@
 // src/js/main.js
 
 import { config } from './config.js';
+import { fetchData } from '../utils/database.js';
 
 // Global variable to store loaded data
 let allData = [];
@@ -13,12 +14,19 @@ function renderResults(results) {
 // Main function to initialize the app
 async function initApp() {
     try {
-        const data = await fetchData();
-        console.log('Data fetched:', data);
-        // Render results using the fetched data
-        renderResults(data);
+        // Load CSV data
+        const csvData = await fetchData('data/existing_upgs_updated.csv');
+        if (!csvData) {
+            throw new Error('Failed to load CSV data');
+        }
+        
+        // Process CSV data
+        processData(csvData);
+        
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error initializing app:', error);
+        // Show user-friendly error message
+        displayError('Failed to load application data');
     }
 }
 
@@ -212,4 +220,12 @@ async function fetchFPGData(country) {
         console.error('Error fetching FPG data:', error);
         return [];
     }
+}
+
+// Add error display function
+function displayError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.body.prepend(errorDiv);
 }

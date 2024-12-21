@@ -1,6 +1,6 @@
 // Firebase configuration and initialization
 import { initializeApp } from 'firebase/app';
-import { getDatabase } from 'firebase/database';
+import { getDatabase, ref, get } from 'firebase/database';
 
 const firebaseConfig = {
   // Move to .env file
@@ -14,7 +14,30 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+let app;
+let db;
 
-export { db }; 
+try {
+  app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+  // Fallback to local storage if Firebase fails
+  db = {
+    ref: (path) => ({
+      get: async () => {
+        try {
+          const data = localStorage.getItem(path);
+          return {
+            exists: () => !!data,
+            val: () => JSON.parse(data)
+          };
+        } catch {
+          return { exists: () => false, val: () => null };
+        }
+      }
+    })
+  };
+}
+
+export { db, ref, get }; 
