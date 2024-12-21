@@ -1,22 +1,28 @@
-// Initialize Firebase for Top 100 list
-firebase.initializeApp(config.firebase);
-const db = firebase.database();
-
 // Global data store
 let allData = [];
+
+// Add this function near the top of main.js
+function displayError(message) {
+    console.error(message);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.body.insertBefore(errorDiv, document.body.firstChild);
+}
 
 // Load and parse CSV data
 async function loadCSVData() {
     try {
-        console.log('Loading CSV data...');
-        const response = await fetch('../data/existing_upgs_updated.csv');
+        const path = 'data/existing_upgs_updated.csv';
+        console.log('Attempting to load CSV from:', path);
+        const response = await fetch(path);
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status} for path: ${path}`);
         }
         
         const text = await response.text();
-        console.log('CSV first line:', text.split('\n')[0]);
+        console.log('CSV loaded successfully, first line:', text.split('\n')[0]);
         
         const data = parseCSVData(text);
         console.log('Parsed data count:', data.length);
