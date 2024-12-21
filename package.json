@@ -6,15 +6,17 @@
   "scripts": {
     "test": "echo 'Error: No test specified' && exit 1",
     "build": "echo 'Building the app...'",
-    "commit": "./scripts/git-commit.sh"
+    "commit": "./scripts/git-commit.sh",
+    "start": "node -r dotenv/config src/index.js"
   },
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "firebase": "^11.1.0",
+    "firebase": "^10.x.x",
     "js-cookie": "^3.7.1",
     "jquery": "^3.0.5",
-    "axios": "^1.7.9"
+    "axios": "^1.7.9",
+    "dotenv": "^16.x.x"
   }
 }
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Frontier Finder</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/accessibility.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <button onclick="window.location.href='index.html'" class="back-button">
+                Back to Search
+            </button>
+        </nav>
+    </header>
+    
+    <main id="results-container">
+        <!-- Results will be populated dynamically -->
+    </main>
+
+    <footer>
+        <a href="top_100.html" class="top-100-link">View Top 100 List</a>
+    </footer>
+
+    <script src="utils/firebase.js"></script>
+    <script src="utils/database.js"></script>
+    <script src="components/Results.js"></script>
+</body>
+</html> 
