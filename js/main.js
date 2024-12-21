@@ -60,7 +60,6 @@ function parseCSVData(csvText) {
                 }, {});
             });
 
-        console.log('First entry:', data[0]);
         return data;
     } catch (error) {
         console.error('CSV parsing error:', error);
@@ -71,7 +70,11 @@ function parseCSVData(csvText) {
 // Populate country dropdown
 function populateCountries(data) {
     const select = document.getElementById('country');
+    select.innerHTML = '<option value="">Choose a country...</option>';
+    
+    // Get unique countries and sort them
     const countries = [...new Set(data.map(row => row.country))].sort();
+    console.log('Available countries:', countries);
     
     countries.forEach(country => {
         const option = document.createElement('option');
@@ -86,14 +89,17 @@ function populateUPGs(country) {
     const select = document.getElementById('upg');
     select.innerHTML = '<option value="">Select a UPG...</option>';
     
+    if (!country) return;
+    
     const upgs = allData
         .filter(row => row.country === country)
         .sort((a, b) => a.name.localeCompare(b.name));
     
+    console.log(`UPGs for ${country}:`, upgs);
+    
     upgs.forEach(upg => {
         const option = document.createElement('option');
         option.value = upg.name;
-        // Use the actual field names from your CSV
         option.textContent = `${upg.name} [${upg.pronunciation || 'N/A'}]`;
         select.appendChild(option);
     });
