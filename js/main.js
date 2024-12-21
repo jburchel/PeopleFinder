@@ -3,11 +3,22 @@ let allData = [];
 
 // Add this function near the top of main.js
 function displayError(message) {
-    console.error(message);
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
     errorDiv.textContent = message;
-    document.body.insertBefore(errorDiv, document.body.firstChild);
+    
+    // Remove any existing error messages
+    const existingError = document.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Insert at the top of the main content
+    const main = document.querySelector('main');
+    main.insertBefore(errorDiv, main.firstChild);
+    
+    // Log to console for debugging
+    console.error(message);
 }
 
 // Load and parse CSV data
@@ -199,27 +210,58 @@ async function handleSearch(event) {
 
         // Fetch FPGs if selected
         if (formData.type === 'fpg' || formData.type === 'both') {
-            const jpUrl = `https://joshuaproject.net/api/v2/peoples?api_key=${config.jpApiKey}&country=${formData.country}&frontier=1`;
-            const response = await fetch(jpUrl);
-            if (!response.ok) {
-                throw new Error('Failed to fetch FPG data');
-            }
-            const fpgData = await response.json();
-            
-            const fpgResults = fpgData.filter(group => {
-                const distance = calculateDistance(
-                    parseFloat(baseUPG.latitude),
-                    parseFloat(baseUPG.longitude),
-                    parseFloat(group.Latitude),
-                    parseFloat(group.Longitude),
-                    formData.unit
-                );
-                if (distance <= parseFloat(formData.radius)) {
-                    return { ...group, distance, type: 'FPG' };
+            try {
+                console.log('Fetching FPG data...');
+                // Build the API URL with proper parameters
+                const jpUrl = new URL('https://api.joshuaproject.net/v1/peoples.json');
+                jpUrl.searchParams.append('api_key', config.jpApiKey);
+                jpUrl.searchParams.append('country_code', formData.country);
+                jpUrl.searchParams.append('frontier_people', 1);
+                
+                console.log('API URL:', jpUrl.toString());
+                
+                const response = await fetch(jpUrl.toString());
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return false;
-            });
-            results = [...results, ...fpgResults];
+                
+                const fpgData = await response.json();
+                console.log('FPG data received:', fpgData);
+                
+                const fpgResults = fpgData
+                    .filter(group => {
+                        if (!group.Latitude || !group.Longitude) return false;
+                        
+                        const distance = calculateDistance(
+                            parseFloat(baseUPG.latitude),
+                            parseFloat(baseUPG.longitude),
+                            parseFloat(group.Latitude),
+                            parseFloat(group.Longitude),
+                            formData.unit
+                        );
+                        
+                        if (distance <= parseFloat(formData.radius)) {
+                            return {
+                                ...group,
+                                distance,
+                                type: 'FPG',
+                                // Map JP API fields to match our format
+                                PeopNameInCountry: group.PeopNameInCountry || group.PeopleName,
+                                Population: group.Population || 0,
+                                PrimaryLanguageName: group.PrimaryLanguageName,
+                                PrimaryReligion: group.PrimaryReligion,
+                                PercentEvangelical: group.PercentEvangelical
+                            };
+                        }
+                        return false;
+                    });
+                
+                results = [...results, ...fpgResults];
+                console.log('Combined results:', results);
+            } catch (error) {
+                console.error('FPG fetch error:', error);
+                displayError(`Failed to fetch FPG data: ${error.message}`);
+            }
         }
 
         // Sort results by distance
