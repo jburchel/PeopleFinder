@@ -324,6 +324,15 @@ async function init() {
         } else {
             throw new Error('No data loaded');
         }
+
+        // Check if logo exists
+        const logo = document.querySelector('.logo-container img');
+        if (logo) {
+            logo.onerror = () => {
+                console.error('Logo failed to load');
+                logo.style.display = 'none';
+            };
+        }
     } catch (error) {
         console.error('Initialization error:', error);
         displayError('Failed to initialize application');

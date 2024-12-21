@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     console.log('Displaying results:', results);
-    displaySearchSummary(searchParams);
+    displaySearchSummary(results, searchParams);
     displayResults(results);
 
     // Add sort button functionality
@@ -34,44 +34,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function displaySearchSummary(params) {
+function displayError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    document.querySelector('main').insertBefore(errorDiv, document.querySelector('main').firstChild);
+}
+
+function displaySearchSummary(results, params) {
     const summary = document.querySelector('.search-summary');
+    const fpgCount = results.filter(r => r.type === 'FPG').length;
+    const uupgCount = results.filter(r => r.type === 'UUPG').length;
+    
     summary.innerHTML = `
         <h2>Search Parameters</h2>
         <p>Country: ${params.country}</p>
         <p>Base UPG: ${params.upg}</p>
         <p>Radius: ${params.radius} ${params.unit}</p>
-        <p>Total Results: ${results.length} (${
-            results.filter(r => r.type === 'FPG').length} FPGs, ${
-            results.filter(r => r.type === 'UUPG').length} UUPGs)</p>
+        <p>Total Results: ${results.length} (${fpgCount} FPGs, ${uupgCount} UUPGs)</p>
     `;
 }
 
-function displayResults(results) {
-    // Split results by type
-    const fpgResults = results.filter(r => r.type === 'FPG');
-    const uupgResults = results.filter(r => r.type === 'UUPG');
-
-    // Display in respective columns
-    document.getElementById('fpgResults').innerHTML = 
-        fpgResults.map(result => createResultCard(result)).join('');
-    document.getElementById('uupgResults').innerHTML = 
-        uupgResults.map(result => createResultCard(result)).join('');
-}
-
-function createResultCard(result) {
+function createResultCard(result, unit) {
     return `
         <div class="result-card ${result.type.toLowerCase()}">
             <div class="result-header">
-                <h3>${result.PeopNameInCountry} 
-                    <span class="pronunciation">[${result.Pronunciation || 'N/A'}]</span>
+                <h3>${result.PeopNameInCountry || result.name} 
+                    <span class="pronunciation">[${result.Pronunciation || result.pronunciation || 'N/A'}]</span>
                 </h3>
-                <span class="distance">${result.distance.toFixed(1)} ${searchParams.unit}</span>
+                <span class="distance">${result.distance.toFixed(1)} ${unit}</span>
             </div>
             <div class="result-details">
-                <p><strong>Population:</strong> ${formatNumber(result.Population)}</p>
-                <p><strong>Language:</strong> ${result.PrimaryLanguageName}</p>
-                <p><strong>Religion:</strong> ${result.PrimaryReligion}</p>
+                <p><strong>Population:</strong> ${formatNumber(result.Population || result.population)}</p>
+                <p><strong>Language:</strong> ${result.PrimaryLanguageName || result.language}</p>
+                <p><strong>Religion:</strong> ${result.PrimaryReligion || result.religion}</p>
                 <p><strong>Location:</strong> ${result.country || result.Ctry}</p>
                 ${result.PercentEvangelical ? 
                     `<p><strong>Evangelical:</strong> ${result.PercentEvangelical}%</p>` : ''}
@@ -83,6 +79,20 @@ function createResultCard(result) {
             </div>
         </div>
     `;
+}
+
+function displayResults(results) {
+    const unit = JSON.parse(sessionStorage.getItem('searchResults')).searchParams.unit;
+    
+    // Split results by type
+    const fpgResults = results.filter(r => r.type === 'FPG');
+    const uupgResults = results.filter(r => r.type === 'UUPG');
+
+    // Display in respective columns
+    document.getElementById('fpgResults').innerHTML = 
+        fpgResults.map(result => createResultCard(result, unit)).join('');
+    document.getElementById('uupgResults').innerHTML = 
+        uupgResults.map(result => createResultCard(result, unit)).join('');
 }
 
 function sortResults(results, sortBy) {
