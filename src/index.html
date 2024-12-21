@@ -3,19 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frontier Finder</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/accessibility.css">
+    <title>Frontier Finder - Crossover Global</title>
     
-    <!-- Add type="module" to enable ES6 modules -->
-    <script type="module" src="js/main.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Firebase (only what we need for Realtime Database) -->
+    <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.x.x/firebase-database.js"></script>
 </head>
 <body>
-    <div id="app">
-        <!-- App content will be loaded here -->
-    </div>
+    <header>
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="Crossover Global Logo" class="logo">
+        </div>
+        <h1>Frontier Finder</h1>
+    </header>
 
-    <!-- Error container for displaying messages -->
-    <div id="error-container"></div>
+    <main>
+        <div class="search-container">
+            <form id="searchForm">
+                <div class="form-group">
+                    <label for="country">Select Country:</label>
+                    <select id="country" name="country" required>
+                        <option value="">Choose a country...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="upg">Select UPG:</label>
+                    <select id="upg" name="upg" required>
+                        <option value="">First select a country...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="radius">Search Radius:</label>
+                    <input type="number" id="radius" name="radius" required min="1">
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="unit" value="miles" checked> Miles
+                        </label>
+                        <label>
+                            <input type="radio" name="unit" value="kilometers"> Kilometers
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
+
+        <div class="top-100-link">
+            <a href="top_100.html">View Top 100 List</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Crossover Global. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html> 
