@@ -4,7 +4,7 @@
     --primary-green: #39A949;  /* PANTONE: 7739 */
     --primary-gray: #7F7F7F;   /* PANTONE: 840 C */
     --primary-white: #FFFFFF;  /* PANTONE: P 75-1 U */
-    --spacing-unit: 15px;      /* Brand book spacing requirement */
+    --spacing-unit: 15px;
     --font-primary: "Cronos Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
@@ -20,89 +20,131 @@ body {
     line-height: 1.6;
     color: var(--primary-blue);
     background-color: var(--primary-white);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-/* Header Styles */
-header {
-    background-color: var(--primary-white);
-    padding: var(--spacing-unit);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
+/* Logo and Header */
 .logo-container {
-    padding: var(--spacing-unit);
     text-align: center;
+    margin-bottom: 30px;
 }
 
-.logo {
-    width: 200px;
+.logo-container img {
+    max-width: 300px;
     height: auto;
 }
 
-h1, h2, h3 {
-    font-family: var(--font-primary);
-    text-align: center;
+h1 {
     color: var(--primary-blue);
-    margin: var(--spacing-unit) 0;
-}
-
-/* Main Content Styles */
-main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--spacing-unit);
+    text-align: center;
+    font-size: 2.5em;
+    margin-bottom: 40px;
 }
 
 /* Form Styles */
-.search-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--spacing-unit);
-    margin-bottom: var(--spacing-unit);
-}
-
 .form-group {
-    margin-bottom: var(--spacing-unit);
+    margin-bottom: 25px;
 }
 
-/* Results Styles */
-.results-container {
-    background-color: var(--primary-white);
-    padding: calc(var(--spacing-unit) * 2);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: var(--spacing-unit);
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--primary-blue);
 }
 
-/* Top 100 Styles */
-.list-item {
-    padding: var(--spacing-unit);
+select, input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
     border: 1px solid var(--primary-gray);
     border-radius: 4px;
-    margin-bottom: var(--spacing-unit);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--primary-white);
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
-/* Button Styles */
-.back-button, .search-button {
+/* Radio Button Group */
+.radio-group {
+    margin-top: 10px;
+}
+
+.radio-group label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 20px;
+    font-weight: normal;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 8px;
+}
+
+/* Search Button */
+.search-button {
     background-color: var(--primary-blue);
     color: var(--primary-white);
-    padding: 8px 16px;
+    padding: 12px 24px;
     border: none;
     border-radius: 4px;
+    font-size: 16px;
     cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
     transition: background-color 0.3s ease;
 }
 
-.back-button:hover, .search-button:hover {
+.search-button:hover {
     background-color: #122b4d;
 }
 
-/* Add Cronos Pro font */
-@import url('https://fonts.cdnfonts.com/css/cronos-pro');
+/* Top 100 Link */
+.top-100-link {
+    text-align: center;
+    margin-top: 30px;
+}
 
-/* Add Font Awesome for icons */
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'); 
+.top-100-link a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.top-100-link a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--primary-gray);
+    color: var(--primary-gray);
+    font-size: 0.9em;
+}
+
+/* Error Message */
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    body {
+        padding: 15px;
+    }
+
+    .logo-container img {
+        max-width: 200px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+}
