@@ -19,20 +19,30 @@
             <!-- Will be populated by JavaScript -->
         </div>
 
-        <div class="results-controls">
-            <label for="sortBy">Sort by:</label>
-            <select id="sortBy">
-                <option value="distance">Distance</option>
-                <option value="population">Population</option>
-                <option value="language">Language</option>
-                <option value="religion">Religion</option>
-                <option value="type">Type (FPG/UUPG)</option>
-                <option value="evangelical">Percent Evangelical</option>
-            </select>
+        <div class="sort-controls">
+            <span class="sort-label">Sort by:</span>
+            <div class="sort-buttons">
+                <button class="sort-button active" data-sort="distance">Distance</button>
+                <button class="sort-button" data-sort="population">Population</button>
+                <button class="sort-button" data-sort="language">Language</button>
+                <button class="sort-button" data-sort="religion">Religion</button>
+                <button class="sort-button" data-sort="evangelical">Evangelical %</button>
+            </div>
         </div>
 
-        <div class="results-container">
-            <!-- Will be populated by JavaScript -->
+        <div class="results-grid">
+            <div class="results-column fpg-column">
+                <h2>Frontier People Groups</h2>
+                <div class="results-list" id="fpgResults">
+                    <!-- FPG results will be populated here -->
+                </div>
+            </div>
+            <div class="results-column uupg-column">
+                <h2>Unreached Unengaged People Groups</h2>
+                <div class="results-list" id="uupgResults">
+                    <!-- UUPG results will be populated here -->
+                </div>
+            </div>
         </div>
 
         <div class="navigation-buttons">

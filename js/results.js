@@ -10,9 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     displaySearchSummary(searchParams);
     displayResults(results);
 
-    // Add sort functionality
-    document.getElementById('sortBy').addEventListener('change', (e) => {
-        sortResults(results, e.target.value);
+    // Add sort button functionality
+    document.querySelectorAll('.sort-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            // Update active button
+            document.querySelectorAll('.sort-button').forEach(btn => 
+                btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            // Sort and display results
+            sortResults(results, e.target.dataset.sort);
+        });
     });
 });
 
@@ -23,14 +31,22 @@ function displaySearchSummary(params) {
         <p>Country: ${params.country}</p>
         <p>Base UPG: ${params.upg}</p>
         <p>Radius: ${params.radius} ${params.unit}</p>
-        <p>Type: ${params.type.toUpperCase()}</p>
-        <p>Total Results: ${results.length}</p>
+        <p>Total Results: ${results.length} (${
+            results.filter(r => r.type === 'FPG').length} FPGs, ${
+            results.filter(r => r.type === 'UUPG').length} UUPGs)</p>
     `;
 }
 
 function displayResults(results) {
-    const container = document.querySelector('.results-container');
-    container.innerHTML = results.map(result => createResultCard(result)).join('');
+    // Split results by type
+    const fpgResults = results.filter(r => r.type === 'FPG');
+    const uupgResults = results.filter(r => r.type === 'UUPG');
+
+    // Display in respective columns
+    document.getElementById('fpgResults').innerHTML = 
+        fpgResults.map(result => createResultCard(result)).join('');
+    document.getElementById('uupgResults').innerHTML = 
+        uupgResults.map(result => createResultCard(result)).join('');
 }
 
 function createResultCard(result) {
@@ -39,9 +55,8 @@ function createResultCard(result) {
             <div class="result-header">
                 <h3>${result.PeopNameInCountry} 
                     <span class="pronunciation">[${result.Pronunciation || 'N/A'}]</span>
-                    <span class="type-badge">${result.type}</span>
                 </h3>
-                <div class="distance">${result.distance.toFixed(1)} ${searchParams.unit}</div>
+                <span class="distance">${result.distance.toFixed(1)} ${searchParams.unit}</span>
             </div>
             <div class="result-details">
                 <p><strong>Population:</strong> ${formatNumber(result.Population)}</p>
@@ -52,11 +67,9 @@ function createResultCard(result) {
                     `<p><strong>Evangelical:</strong> ${result.PercentEvangelical}%</p>` : ''}
             </div>
             <div class="result-actions">
-                <label>
-                    <input type="checkbox" class="add-to-top-100" 
-                           data-group-id="${result.PeopleID3 || result.id}">
+                <button class="add-to-top-100" data-group-id="${result.PeopleID3 || result.id}">
                     Add to Top 100
-                </label>
+                </button>
             </div>
         </div>
     `;
@@ -73,8 +86,6 @@ function sortResults(results, sortBy) {
                 return (a.PrimaryLanguageName || '').localeCompare(b.PrimaryLanguageName || '');
             case 'religion':
                 return (a.PrimaryReligion || '').localeCompare(b.PrimaryReligion || '');
-            case 'type':
-                return (a.type || '').localeCompare(b.type || '');
             case 'evangelical':
                 return (b.PercentEvangelical || 0) - (a.PercentEvangelical || 0);
             default:
