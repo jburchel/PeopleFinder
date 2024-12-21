@@ -37,9 +37,38 @@ async function loadCSVData() {
 // Function to load UUPG CSV data
 async function loadUUPGData() {
     try {
-        const response = await fetch('./data/updated_uupg.csv');
+        const response = await fetch('data/updated_uupg.csv');
         const csvText = await response.text();
-        return parseCSV(csvText);
+        
+        // Parse CSV with proper column mapping
+        const lines = csvText.split('\n').filter(line => line.trim());
+        const headers = lines[0].split(',').map(h => h.trim());
+        
+        return lines.slice(1).map(line => {
+            // Handle quoted values that might contain commas
+            const values = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
+                ?.map(val => val.replace(/^"|"$/g, '').trim()) || [];
+            
+            const entry = {};
+            headers.forEach((header, index) => {
+                entry[header] = values[index] || '';
+            });
+            
+            // Add type identifier
+            entry.type = 'UUPG';
+            
+            return {
+                name: entry[0] || '',                // Name
+                pronunciation: entry[1] || '',       // Pronunciation
+                country: entry[2] || '',            // Country
+                population: parseInt(entry[3]) || 0, // Population
+                language: entry[4] || '',           // Language
+                religion: entry[5] || '',           // Religion
+                latitude: parseFloat(entry[6]) || 0, // Latitude
+                longitude: parseFloat(entry[7]) || 0,// Longitude
+                type: 'UUPG'
+            };
+        });
     } catch (error) {
         console.error('Error loading UUPG CSV:', error);
         return [];
@@ -119,14 +148,112 @@ async function handleSearch(event) {
         country: document.getElementById('country').value,
         upg: document.getElementById('upg').value,
         radius: document.getElementById('radius').value,
-        unit: document.querySelector('input[name="unit"]:checked').value
+        unit: document.querySelector('input[name="unit"]:checked').value,
+        type: document.querySelector('input[name="type"]:checked').value
     };
 
-    // Store search parameters in sessionStorage
-    sessionStorage.setItem('searchParams', JSON.stringify(formData));
-    
-    // Redirect to results page
-    window.location.href = 'results.html';
+    try {
+        // Get base UPG coordinates
+        const baseUPG = allData.find(upg => upg.name === formData.upg);
+        if (!baseUPG) {
+            throw new Error('Base UPG not found');
+        }
+
+        let results = [];
+
+        // Fetch UUPGs if selected
+        if (formData.type === 'uupg' || formData.type === 'both') {
+            const uupgData = await loadUUPGData();
+            const uupgResults = uupgData
+                .filter(group => {
+                    // Only process if we have valid coordinates
+                    if (!group.latitude || !group.longitude) return false;
+                    
+                    const distance = calculateDistance(
+                        parseFloat(baseUPG.latitude),
+                        parseFloat(baseUPG.longitude),
+                        group.latitude,
+                        group.longitude,
+                        formData.unit
+                    );
+                    
+                    // Add distance to the group object if within radius
+                    if (distance <= parseFloat(formData.radius)) {
+                        group.distance = distance;
+                        return true;
+                    }
+                    return false;
+                })
+                .map(group => ({
+                    ...group,
+                    PeopNameInCountry: group.name,
+                    Pronunciation: group.pronunciation,
+                    Population: group.population,
+                    PrimaryLanguageName: group.language,
+                    PrimaryReligion: group.religion,
+                    type: 'UUPG'
+                }));
+            
+            results = [...results, ...uupgResults];
+        }
+
+        // Fetch FPGs if selected
+        if (formData.type === 'fpg' || formData.type === 'both') {
+            const jpUrl = `https://joshuaproject.net/api/v2/peoples?api_key=${config.jpApiKey}&country=${formData.country}&frontier=1`;
+            const response = await fetch(jpUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch FPG data');
+            }
+            const fpgData = await response.json();
+            
+            const fpgResults = fpgData.filter(group => {
+                const distance = calculateDistance(
+                    parseFloat(baseUPG.latitude),
+                    parseFloat(baseUPG.longitude),
+                    parseFloat(group.Latitude),
+                    parseFloat(group.Longitude),
+                    formData.unit
+                );
+                if (distance <= parseFloat(formData.radius)) {
+                    return { ...group, distance, type: 'FPG' };
+                }
+                return false;
+            });
+            results = [...results, ...fpgResults];
+        }
+
+        // Sort results by distance
+        results.sort((a, b) => a.distance - b.distance);
+
+        // Store results in sessionStorage
+        sessionStorage.setItem('searchResults', JSON.stringify({
+            results,
+            searchParams: formData
+        }));
+
+        // Redirect to results page
+        window.location.href = 'results.html';
+    } catch (error) {
+        console.error('Search error:', error);
+        displayError(`Search failed: ${error.message}`);
+    }
+}
+
+// Helper function to calculate distance
+function calculateDistance(lat1, lon1, lat2, lon2, unit) {
+    const R = unit === 'kilometers' ? 6371 : 3959; // Earth's radius in km or miles
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+function toRad(degrees) {
+    return degrees * Math.PI / 180;
 }
 
 // Initialize the page

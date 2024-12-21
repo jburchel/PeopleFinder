@@ -1,118 +1,90 @@
-// Get search parameters from session storage
-const searchParams = JSON.parse(sessionStorage.getItem('searchParams'));
-let searchResults = [];
-
-// Initialize Firebase (using config from config.js)
-firebase.initializeApp(config.firebase);
-const db = firebase.database();
-
-// Calculate distance between two points
-function calculateDistance(lat1, lon1, lat2, lon2, unit) {
-    const R = unit === 'kilometers' ? 6371 : 3959; // Earth's radius in km or miles
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-function toRad(degrees) {
-    return degrees * (Math.PI/180);
-}
-
-// Fetch and display results
-async function fetchResults() {
-    try {
-        // Get base UPG coordinates from CSV
-        const baseUPG = await getBaseUPGData(searchParams.upg);
-        
-        // Fetch FPGs/UUPGs from Joshua Project API
-        const apiUrl = `https://joshuaproject.net/api/v2/peoples?api_key=${config.jpApiKey}&country=${searchParams.country}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        
-        // Filter and process results
-        searchResults = data
-            .filter(group => {
-                const distance = calculateDistance(
-                    baseUPG.latitude,
-                    baseUPG.longitude,
-                    group.Latitude,
-                    group.Longitude,
-                    searchParams.unit
-                );
-                group.distance = distance; // Add distance to group object
-                return distance <= searchParams.radius;
-            })
-            .sort((a, b) => a.distance - b.distance);
-
-        displayResults(searchResults);
-    } catch (error) {
-        console.error('Error fetching results:', error);
-        showError('Failed to load results. Please try again.');
-    }
-}
-
-// Display results in the table
-function displayResults(results) {
-    const container = document.getElementById('resultsList');
-    container.innerHTML = results.map(group => `
-        <li class="result-item">
-            <div class="group-info">
-                <h3>${group.PeopNameInCountry} 
-                    <span class="pronunciation">[${group.Pronunciation || 'N/A'}]</span>
-                    ${group.AudioAddress ? 
-                        `<button onclick="playPronunciation('${group.AudioAddress}')" class="play-button">▶</button>` 
-                        : ''}
-                </h3>
-                <p>Distance: ${group.distance.toFixed(1)} ${searchParams.unit}</p>
-                <p>Population: ${group.Population.toLocaleString()}</p>
-                <p>Evangelical: ${group.PercentEvangelical}%</p>
-            </div>
-            <button onclick="addToTop100('${group.PeopleID3}')" class="add-button">
-                Add to Top 100
-            </button>
-        </li>
-    `).join('');
-}
-
-// Add to Top 100 list
-async function addToTop100(peopleId) {
-    try {
-        const ref = db.ref('top100/' + peopleId);
-        await ref.set(searchResults.find(g => g.PeopleID3 === peopleId));
-        alert('Added to Top 100 list!');
-    } catch (error) {
-        console.error('Error adding to Top 100:', error);
-        alert('Failed to add to Top 100. Please try again.');
-    }
-}
-
-// Sort results
-function sortResults(criteria) {
-    switch(criteria) {
-        case 'distance':
-            searchResults.sort((a, b) => a.distance - b.distance);
-            break;
-        case 'population':
-            searchResults.sort((a, b) => b.Population - a.Population);
-            break;
-        case 'evangelical':
-            searchResults.sort((a, b) => b.PercentEvangelical - a.PercentEvangelical);
-            break;
-        // Add other sorting options as needed
-    }
-    displayResults(searchResults);
-}
-
-// Initialize page
+// Load and display results
 document.addEventListener('DOMContentLoaded', () => {
-    fetchResults();
-    
-    // Add sort listener
-    document.getElementById('sort').addEventListener('change', (e) => {
-        sortResults(e.target.value);
+    const storedData = JSON.parse(sessionStorage.getItem('searchResults'));
+    if (!storedData) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const { results, searchParams } = storedData;
+    displaySearchSummary(searchParams);
+    displayResults(results);
+
+    // Add sort functionality
+    document.getElementById('sortBy').addEventListener('change', (e) => {
+        sortResults(results, e.target.value);
     });
-}); 
+});
+
+function displaySearchSummary(params) {
+    const summary = document.querySelector('.search-summary');
+    summary.innerHTML = `
+        <h2>Search Parameters</h2>
+        <p>Country: ${params.country}</p>
+        <p>Base UPG: ${params.upg}</p>
+        <p>Radius: ${params.radius} ${params.unit}</p>
+        <p>Type: ${params.type.toUpperCase()}</p>
+        <p>Total Results: ${results.length}</p>
+    `;
+}
+
+function displayResults(results) {
+    const container = document.querySelector('.results-container');
+    container.innerHTML = results.map(result => createResultCard(result)).join('');
+}
+
+function createResultCard(result) {
+    return `
+        <div class="result-card ${result.type.toLowerCase()}">
+            <div class="result-header">
+                <h3>${result.PeopNameInCountry} 
+                    <span class="pronunciation">[${result.Pronunciation || 'N/A'}]</span>
+                    <span class="type-badge">${result.type}</span>
+                </h3>
+                <div class="distance">${result.distance.toFixed(1)} ${searchParams.unit}</div>
+            </div>
+            <div class="result-details">
+                <p><strong>Population:</strong> ${formatNumber(result.Population)}</p>
+                <p><strong>Language:</strong> ${result.PrimaryLanguageName}</p>
+                <p><strong>Religion:</strong> ${result.PrimaryReligion}</p>
+                <p><strong>Location:</strong> ${result.country || result.Ctry}</p>
+                ${result.PercentEvangelical ? 
+                    `<p><strong>Evangelical:</strong> ${result.PercentEvangelical}%</p>` : ''}
+            </div>
+            <div class="result-actions">
+                <label>
+                    <input type="checkbox" class="add-to-top-100" 
+                           data-group-id="${result.PeopleID3 || result.id}">
+                    Add to Top 100
+                </label>
+            </div>
+        </div>
+    `;
+}
+
+function sortResults(results, sortBy) {
+    const sortedResults = [...results].sort((a, b) => {
+        switch (sortBy) {
+            case 'distance':
+                return a.distance - b.distance;
+            case 'population':
+                return (b.Population || 0) - (a.Population || 0);
+            case 'language':
+                return (a.PrimaryLanguageName || '').localeCompare(b.PrimaryLanguageName || '');
+            case 'religion':
+                return (a.PrimaryReligion || '').localeCompare(b.PrimaryReligion || '');
+            case 'type':
+                return (a.type || '').localeCompare(b.type || '');
+            case 'evangelical':
+                return (b.PercentEvangelical || 0) - (a.PercentEvangelical || 0);
+            default:
+                return 0;
+        }
+    });
+
+    displayResults(sortedResults);
+}
+
+function formatNumber(num) {
+    return new Intl.NumberFormat().format(num || 0);
+} 
