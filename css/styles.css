@@ -148,3 +148,62 @@ footer {
         font-size: 2em;
     }
 }
+
+/* Grid Layout */
+.search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 25px;
+}
+
+/* Radius Specific Styles */
+.radius-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.radius-container input[type="number"] {
+    width: 100px;
+    padding: 8px;
+}
+
+/* Radio Groups */
+.radio-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.radio-group label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    font-weight: normal;
+}
+
+.type-group {
+    margin-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .radius-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .radio-group {
+        margin-top: 10px;
+    }
+}

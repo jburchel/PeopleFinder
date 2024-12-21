@@ -18,30 +18,51 @@
 
     <main>
         <form id="searchForm">
-            <div class="form-group">
-                <label for="country">Select Country:</label>
-                <select id="country" name="country" required>
-                    <option value="">Choose a country...</option>
-                </select>
-            </div>
+            <div class="search-grid">
+                <!-- Row 1 -->
+                <div class="form-group">
+                    <label for="country">Select Country:</label>
+                    <select id="country" name="country" required>
+                        <option value="">Choose a country...</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="upg">Select UPG:</label>
-                <select id="upg" name="upg" required>
-                    <option value="">First select a country...</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="upg">Select UPG:</label>
+                    <select id="upg" name="upg" required>
+                        <option value="">First select a country...</option>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="radius">Search Radius:</label>
-                <input type="number" id="radius" name="radius" required min="1">
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" name="unit" value="miles" checked> Miles
-                    </label>
-                    <label>
-                        <input type="radio" name="unit" value="kilometers"> Kilometers
-                    </label>
+                <!-- Row 2 -->
+                <div class="form-group radius-group">
+                    <label for="radius">Search Radius:</label>
+                    <div class="radius-container">
+                        <input type="number" id="radius" name="radius" required min="1" max="1000">
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="unit" value="miles" checked> Miles
+                            </label>
+                            <label>
+                                <input type="radio" name="unit" value="kilometers"> Kilometers
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Type:</label>
+                    <div class="radio-group type-group">
+                        <label>
+                            <input type="radio" name="type" value="fpg" checked> FPG
+                        </label>
+                        <label>
+                            <input type="radio" name="type" value="uupg"> UUPG
+                        </label>
+                        <label>
+                            <input type="radio" name="type" value="both"> Both
+                        </label>
+                    </div>
                 </div>
             </div>
 
