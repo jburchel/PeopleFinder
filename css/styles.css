@@ -1,0 +1,108 @@
+/* Variables */
+:root {
+    --primary-blue: #183963;   /* PANTONE: 534 */
+    --primary-green: #39A949;  /* PANTONE: 7739 */
+    --primary-gray: #7F7F7F;   /* PANTONE: 840 C */
+    --primary-white: #FFFFFF;  /* PANTONE: P 75-1 U */
+    --spacing-unit: 15px;      /* Brand book spacing requirement */
+    --font-primary: "Cronos Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.6;
+    color: var(--primary-blue);
+    background-color: var(--primary-white);
+}
+
+/* Header Styles */
+header {
+    background-color: var(--primary-white);
+    padding: var(--spacing-unit);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo-container {
+    padding: var(--spacing-unit);
+    text-align: center;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-primary);
+    text-align: center;
+    color: var(--primary-blue);
+    margin: var(--spacing-unit) 0;
+}
+
+/* Main Content Styles */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-unit);
+}
+
+/* Form Styles */
+.search-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-unit);
+    margin-bottom: var(--spacing-unit);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-unit);
+}
+
+/* Results Styles */
+.results-container {
+    background-color: var(--primary-white);
+    padding: calc(var(--spacing-unit) * 2);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: var(--spacing-unit);
+}
+
+/* Top 100 Styles */
+.list-item {
+    padding: var(--spacing-unit);
+    border: 1px solid var(--primary-gray);
+    border-radius: 4px;
+    margin-bottom: var(--spacing-unit);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--primary-white);
+}
+
+/* Button Styles */
+.back-button, .search-button {
+    background-color: var(--primary-blue);
+    color: var(--primary-white);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover, .search-button:hover {
+    background-color: #122b4d;
+}
+
+/* Add Cronos Pro font */
+@import url('https://fonts.cdnfonts.com/css/cronos-pro');
+
+/* Add Font Awesome for icons */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'); 
